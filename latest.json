@@ -1,16 +1,16 @@
 {
   "payload": {
     "schema": 1,
-    "release": "f16f2c4330fd1e471434eb5ab7699409a0bb684f",
-    "version": "2026.11.26.45756212580",
-    "sequence": 45756212580,
+    "release": "d73aba449adf059b2a65e0a8133382e472bfac62",
+    "version": "2026.11.26.45769477186",
+    "sequence": 45769477186,
     "notes": "已通過測試的專案管理更新",
-    "published_at": "2026-11-26T04:36:40.477847+00:00",
+    "published_at": "2026-11-26T06:38:08.943802+00:00",
     "package": {
-      "url": "https://github.com/Cheng-Work/project-manager-updates/releases/download/v2026.11.26.45756212580/ProjectManager-update-Windows-x64.zip",
-      "size": 9660108,
-      "sha256": "c22d5628d5868a09af879cda0549890732f8d3825b410f95ce5538e6989a6795"
+      "url": "https://github.com/Cheng-Work/project-manager-updates/releases/download/v2026.11.26.45769477186/ProjectManager-update-Windows-x64.zip",
+      "size": 9666707,
+      "sha256": "c29f56ace865072cc0aa6759ed99e7c4eeef69b2011fd79333ff932fa5b00056"
     }
   },
-  "signature": "7QfDt9nGw7BBeXaKl8WkOkmZKc0oJFakedwWvNsTbGjLZyJ3r++1HgBr/wPdQUJeklvRf76TSnY9/dn6THGhBg=="
+  "signature": "Zz+2E+Gww5tIST5nzsZl/yEOqjLFEHHaA0ZLR2GPp93mcA2O+Fcg8rqjb3eRZ1s2ZH7Ee/aJh6SaEezBN1OCDg=="
 }
