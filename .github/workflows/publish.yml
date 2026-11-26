@@ -1,0 +1,81 @@
+# Install this template as .github/workflows/publish.yml in the public updates repo.
+# It requires no stored token: GITHUB_TOKEN is scoped to this public repository.
+name: Publish public update assets
+
+on:
+  push:
+    branches: [main]
+    paths: [publish.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-update-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Publish the exact pushed artifacts as an immutable release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          expected_sha = os.environ['EXPECTED_SHA']
+          head = subprocess.run(['gh', 'api', 'repos/' + repo + '/commits/main', '--jq', '.sha'],
+                                check=True, capture_output=True, text=True).stdout.strip()
+          if head != expected_sha:
+              print('A newer artifact commit exists. Skip this older publication.')
+              raise SystemExit(0)
+          metadata = json.loads(Path('publish.json').read_text(encoding='utf-8'))
+          tag, title, notes, sequence = (metadata[k] for k in ('tag', 'title', 'notes', 'sequence'))
+          if not isinstance(tag, str) or not re.fullmatch(r'v[A-Za-z0-9][A-Za-z0-9._-]{0,79}', tag):
+              raise ValueError('Invalid release tag.')
+          if not isinstance(title, str) or not 1 <= len(title) <= 160 or not isinstance(notes, str) or len(notes) > 8000:
+              raise ValueError('Invalid release description.')
+          if type(sequence) is not int or sequence < 1:
+              raise ValueError('Invalid release sequence.')
+          assets = ['ProjectManager-Windows-x64.zip', 'ProjectManager-Windows-x64.zip.sha256',
+                    'ProjectManager-update-Windows-x64.zip', 'ProjectManager-update-Windows-x64.zip.sha256', 'latest.json']
+          for name in assets:
+              path = Path(name)
+              if path.is_symlink() or not path.is_file() or not 0 < path.stat().st_size <= 100 * 1024 * 1024:
+                  raise ValueError('Missing or oversized public release asset.')
+          for name in assets[:4:2]:
+              digest = hashlib.sha256(Path(name).read_bytes()).hexdigest()
+              if Path(name + '.sha256').read_text(encoding='ascii').split() != [digest, name]:
+                  raise ValueError('Release asset checksum mismatch.')
+          payload = json.loads(Path('latest.json').read_text(encoding='utf-8'))['payload']
+          update = Path('ProjectManager-update-Windows-x64.zip')
+          if payload['sequence'] != sequence or 'v' + payload['version'] != tag:
+              raise ValueError('Release metadata and signed manifest differ.')
+          if payload['package']['size'] != update.stat().st_size or payload['package']['sha256'] != hashlib.sha256(update.read_bytes()).hexdigest():
+              raise ValueError('Update payload differs from signed manifest.')
+          exists = subprocess.run(['gh', 'release', 'view', tag, '--repo', repo, '--json', 'tagName'], capture_output=True)
+          if exists.returncode == 0:
+              print('Immutable release already exists. Skip republishing.')
+              raise SystemExit(0)
+          # Metadata is passed as literal argv values, never evaluated by a shell.
+          subprocess.run(['gh', 'release', 'create', tag, '--repo', repo, '--target', expected_sha,
+                          '--title', title, '--notes', notes, '--latest', *assets], check=True)
+          PY
