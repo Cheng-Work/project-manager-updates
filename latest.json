@@ -2,15 +2,15 @@
   "payload": {
     "schema": 1,
     "release": "cfdea51d4390cc8e6c25fa6b80ec29abe1554ec2",
-    "version": "2026.11.26.5",
-    "sequence": 1795588210,
-    "notes": "管理員可在清單及詳情直接修改負責人、日期、優先度並自動儲存",
-    "published_at": "2026-11-26T01:25:51.920297+00:00",
+    "version": "2026.11.26.45736221423",
+    "sequence": 45736221423,
+    "notes": "已通過測試的專案管理更新",
+    "published_at": "2026-11-26T01:43:00.507141+00:00",
     "package": {
-      "url": "https://github.com/Cheng-Work/project-manager-updates/releases/download/v2026.11.26.5/ProjectManager-update-Windows-x64.zip",
-      "size": 10099773,
-      "sha256": "55867af54653bafaf7f6f6f469f6b3cc6314e957906df4ead79c4a8da978b2b0"
+      "url": "https://github.com/Cheng-Work/project-manager-updates/releases/download/v2026.11.26.45736221423/ProjectManager-update-Windows-x64.zip",
+      "size": 9626772,
+      "sha256": "31fdd7bb29b64e263d4d117c6e5cf3c7072909af27cd0b7fbd0a909bfdb3681f"
     }
   },
-  "signature": "YcXU006hVt5pf+/LG4n5SkZ1n1S0tfemobDDj/5ezBgj2QP4tp54TAizpyCg6NRb7cEK2h9u7zLN4zsSMTNODw=="
+  "signature": "pQ+xUKss4LlzQvU/6SFLg/TrgI3MyLo2iSDiRpKsIZwCNCXSw6kQgi0tQj20xRTcrqtUBTeyXW4OFQ4BuslaDw=="
 }
